@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 # print("Version : ", tf.__version__)
 
@@ -14,16 +15,27 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(10)
 ])
 
-predictions = model(x_train[0:1]).numpy()
-tf.nn.softmax(predictions).numpy()
+# predictions = model(x_train[0:1]).numpy()
+# tf.nn.softmax(predictions).numpy()
 
 loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-a = loss_fn(y_train[0:1], predictions).numpy()
+# loss_fn(y_train[0:1], predictions).numpy()
 
-print("Loss : ", a)
 
-# model.compile(
-#     optimizer="adam",
-#     loss=loss_fn,
-#     metrics=["accuracy"]
-# )
+model.compile(
+    optimizer="adam",
+    loss=loss_fn,
+    metrics=["accuracy"]
+)
+
+model.fit(x_train, y_train, epochs=5)
+model.evaluate(x_test, y_test, verbose=2)
+
+probability_model = tf.keras.models.Sequential([
+    model,
+    tf.keras.layers.Softmax()
+])
+
+pred = probability_model(x_test[:1])
+print("Predictions : ", pred)
+print("Total : ", np.sum(pred))
