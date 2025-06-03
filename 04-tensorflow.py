@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 
 # print("Version : ", tf.__version__)
 
@@ -28,7 +29,11 @@ model.compile(
     metrics=["accuracy"]
 )
 
-model.fit(x_train, y_train, epochs=5)
+history = model.fit(x_train, y_train, epochs=5)
+accuracy_list = history.history["accuracy"]
+loss_list = history.history["loss"]
+epochs = range(1, len(accuracy_list) + 1)
+
 model.evaluate(x_test, y_test, verbose=2)
 
 probability_model = tf.keras.models.Sequential([
@@ -39,3 +44,27 @@ probability_model = tf.keras.models.Sequential([
 pred = probability_model(x_test[:1])
 print("Predictions : ", pred)
 print("Total : ", np.sum(pred))
+
+
+# plt.plot(accuracy_list, marker='o')
+# plt.title("Accuracy vs Epochs")
+# plt.xlabel("Epochs")
+# plt.ylabel("Accuracy")
+# plt.grid(True)
+# plt.show()
+
+# Accuracy plot
+plt.plot(epochs, accuracy_list, marker='o')
+plt.title("Accuracy vs Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy")
+plt.grid(True)
+plt.show()
+
+# Loss plot
+plt.plot(epochs, loss_list, marker='o', color='r')
+plt.title("Loss vs Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.show()
